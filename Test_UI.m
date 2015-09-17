@@ -223,11 +223,11 @@ card_type.card320 =struct('no_row',8,'no_col',40,'des_str1',4,'des_end1',23,'des
 
 card_type.card408 =struct('no_row',8,'no_col',51,'des_str1',4,'des_end1',29,'des_str2',31,'des_end2',55,'des_str3',0,'des_end3',0,'l_spa',0,'l1_col',1,'l1_row',[2 7],'l2_col',30,'l2_row',[2 7],'l3_col',58,'l3_row',[2 7],'l4_col',0,'l4_row',[0],'peg1',3,'peg2',56,'peg3',0,'emg',1);
 
-card_type.card612 =struct('no_row',12,'no_col',51,'des_str1',4,'des_end1',29,'des_str2',31,'des_end2',55,'des_str3',0,'des_end3',0,'l_spa',0,'l1_col',1,'l1_row',[4 9],'l2_col',30,'l2_row',[3 10],'l3_col',58,'l3_row',[4 9],'l4_col',0,'l4_row',[0],'peg1',3,'peg2',56,'peg3',0,'emg',1);
+card_type.card612 =struct('no_row',12,'no_col',51,'des_str1',4,'des_end1',29,'des_str2',31,'des_end2',55,'des_str3',0,'des_end3',0,'l_spa',0,'l1_col',1,'l1_row',[3 10],'l2_col',30,'l2_row',[3 10],'l3_col',58,'l3_row',[3 10],'l4_col',0,'l4_row',[0],'peg1',3,'peg2',56,'peg3',0,'emg',1);
 
 card_type.card616 =struct('no_row',8,'no_col',77,'des_str1',4,'des_end1',29,'des_str2',32,'des_end2',57,'des_str3',60,'des_end3',84,'l_spa',1,'l1_col',1,'l1_row',[2 7],'l2_col',31,'l2_row',[2 7],'l3_col',59,'l3_row',[2 7],'l4_col',87,'l4_row',[2 7],'peg1',3,'peg2',85,'peg3',0,'emg',1);
 
-card_type.card828 =struct('no_row',12,'no_col',69,'des_str1',4,'des_end1',24,'des_str2',26,'des_end2',52,'des_str3',54,'des_end3',74,'l_spa',0,'l1_col',1,'l1_row',[4 9],'l2_col',25,'l2_row',[3 10],'l3_col',53,'l3_row',[3 10],'l4_col',77,'l4_row',[4 9],'peg1',3,'peg2',75,'peg3',0,'emg',1);
+card_type.card828 =struct('no_row',12,'no_col',69,'des_str1',4,'des_end1',24,'des_str2',26,'des_end2',52,'des_str3',54,'des_end3',74,'l_spa',0,'l1_col',1,'l1_row',[3 10],'l2_col',25,'l2_row',[3 10],'l3_col',53,'l3_row',[3 10],'l4_col',77,'l4_row',[3 10],'peg1',3,'peg2',75,'peg3',0,'emg',1);
 
 handles.card_type=card_type;
 
