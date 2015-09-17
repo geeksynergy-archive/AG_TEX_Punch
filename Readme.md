@@ -14,11 +14,9 @@ manipulation of the image, image to card layout conversion as addressed below.,
 
  *. Built as two models
 
-		*. Version-1 as simplistic and tightly constrained to get maximum out of 
-GPIO and I2C pins with ATMega8
+		*. Version-1 as simplistic and tightly constrained to get maximum out of GPIO and I2C pins with ATMega8
 
-		*. Version-2 was designed using ATMega2560 to have higher degree of 
-flexibility and much more real-time response.
+		*. Version-2 was designed using ATMega2560 to have higher degree of flexibility and much more real-time response.
 
  *. UI was built on GUIDE with Mathworks Matlab.
 
