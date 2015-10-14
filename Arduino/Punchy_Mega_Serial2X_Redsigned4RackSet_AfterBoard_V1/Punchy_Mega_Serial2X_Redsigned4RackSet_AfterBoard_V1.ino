@@ -49,12 +49,12 @@ int testpunchReleaseDelay = 500;
 int rackTestSteps = 25;
 
 
-int entryDistance = 11;
+int entryDistance = 13;
 
 int card_Loc = 0;
 int card_Max = 99;
 int card_Set[100];
-
+int Nprint_Count = 12;
 
 char* driveDirection[5][2] = {
   {"0011", "1100"},
@@ -108,6 +108,7 @@ int ok_Button = 2;
 long debouncing_time = 15; //Debouncing Time in Milliseconds
 volatile unsigned long last_micros;
 
+
 volatile int upstate = LOW;
 volatile int dnstate = LOW;
 volatile int okstate = LOW;
@@ -116,13 +117,21 @@ volatile int okstate = LOW;
 
 
 const byte ROWS = 4; //four rows
-const byte COLS = 4; //three columns
+const byte COLS = 4; //three columns old board
+//char keys[ROWS][COLS] = {
+//  {'1', '2', '3', 'A'},
+//  {'4', '5', '6', 'B'},
+//  {'7', '8', '9', 'C'},
+//  {'*', '0', '#', 'D'}
+//};
+// New Board 
 char keys[ROWS][COLS] = {
-  {'1', '2', '3', 'A'},
-  {'4', '5', '6', 'B'},
-  {'7', '8', '9', 'C'},
-  {'*', '0', '#', 'D'}
+  {'D', 'C', 'B', 'A'},
+  {'#', '9', '6', '3'},
+  {'0', '8', '5', '2'},
+  {'*', '7', '4', '1'}
 };
+
 byte rowPins[ROWS] = {A7, A6, A5, A4}; //connect to the row pinouts of the keypad
 byte colPins[COLS] = {A3, A2, A1, A0}; //connect to the column pinouts of the keypad
 
@@ -130,8 +139,8 @@ Keypad keypad = Keypad( makeKeymap(keys), rowPins, colPins, ROWS, COLS );
 
 LiquidCrystal lcd(LCD_RS, LCD_EN, LCD_D4, LCD_D5, LCD_D6, LCD_D7);
 
-int reset_idle_Count = 3000;
-int Keep_it_Idle=0;
+int reset_idle_Count = 2000;
+int Keep_it_Idle = 0;
 void setupLCD()
 {
   pinMode(LCD_RW, OUTPUT);
@@ -171,6 +180,8 @@ void setup()
   attachInterrupt(0, CancelButn, FALLING);
   //  attachInterrupt(5, ShiftButn, FALLING);
   attachInterrupt(1, OKButn, FALLING);
+
+
 
   resetLcd();
   lcd.write(About[2]);
@@ -217,7 +228,7 @@ void OKButn()
     relayState[rM] = true;
     relayState[rC] = true;
     driveRelay();
-    delay(100000);
+    delay(50000);
     initRelays();
   }
 
@@ -230,7 +241,7 @@ void keepAllUnderReset(bool reset)
     int i;
     for (i = 0; i < 8; i++)
     {
-       if (i == 7)
+      if (i == 7)
         driveLatches(0, 0, 0, 0, 0, 0, 0, 0, 0);
       else
         driveLatches(i, 0, 0, 0, 0, 0, 0, 0, 0);
@@ -241,7 +252,6 @@ void keepAllUnderReset(bool reset)
 
 void loop()
 {
-  
   if (opcancelled | cmdStr == "TES Q") // Should Cancel both hardware and software commands
   {
     lcd.setCursor(0, 1);
@@ -258,10 +268,8 @@ void loop()
     // stop the current action and reset the menu
     // Serial.println("The Device is now in Hardware Mode");
     char newval = FetchKeySelection();
-
     lcd.setCursor(0, 0);
     lcd.write(menuSelection[0]);
-
     if (newval != oldval & newval != NO_KEY)
     {
       oldval = newval;
@@ -279,13 +287,14 @@ void loop()
         case '5' :  cmdStr = opList[2]; cmdStr.concat(" 8191"); break;
         case '6' :  cmdStr = opList[2]; cmdStr.concat(" R"); break;
         case 'B' :  cmdStr = opList[2]; cmdStr.concat(" Q");  break;
+        case 'C' :  cmdStr = opList[2]; cmdStr.concat(" P");  break;
         case '7' :  singlePinTest(); break;// opcancelled = true;
         default :   lcd.setCursor(0, 1); lcd.write(menuSelection[11]); oldval = NO_KEY; squeak(1); break;
       }
   }
   else
   {
-      
+    
     if (Keep_it_Idle  < 500 && Keep_it_Idle  > 100 )
     {
       Keep_it_Idle = 100;
@@ -301,14 +310,14 @@ void loop()
     {
       cmdStr.remove(0);
       //  firstMicros = micros();
-//      Keep_it_Idle = reset_idle_Count;
+      //Keep_it_Idle = reset_idle_Count;
+
     }
     else
     {
       lcd.setCursor(0, 0);
       lcd.write(operation[3]);
     }
-
     while (Serial.available() > 0 & !opcancelled)
     {
       char carbyte = Serial.read();
@@ -320,20 +329,18 @@ void loop()
 
     }
   }
-
   // Lets wait for something here
   keepAllUnderReset(cmdStr.length() ==  0);
-
   if (cmdStr.length() > 3)
   {
     //Data is Pouring In Keep the device idle
-    Keep_it_Idle = reset_idle_Count; // this sets back to max and waits for the device to cool off
+    // this sets back to max and waits for the device to cool off
     switch (IsArrayContains(cmdStr.substring(0, 3), opList))
     {
       case 0  : getPunchValue(cmdStr.substring(4));  cmdStr.remove(0); break;
       case 1  : setRelay(cmdStr.substring(4)); cmdStr.remove(0); break;
       case 2  : if (!testDevice(cmdStr.substring(4))) cmdStr.remove(0); break;
-      case 3  : initCardSet(cmdStr.substring(4)); cmdStr.remove(0); break;
+      case 3  : initCardSet(cmdStr.substring(4)); cmdStr.remove(0);break;
       case 4  : prntCardSet(cmdStr.substring(4)); cmdStr.remove(0); break;
       case 5  : pnchCardSet(cmdStr.substring(4)); cmdStr.remove(0); Keep_it_Idle = reset_idle_Count;  break;
       case 6  : resetFunc(); break;//Reset Device.
@@ -354,8 +361,6 @@ void loop()
     //    long lastmicros = micros();
     //    Serial.print("Time: ");
     //    Serial.println(lastmicros - firstMicros);
-
-
   }
 
 }
@@ -528,7 +533,7 @@ void rackBack()
 
 void idle_rackBack()
 {
-  idle_initRelays();
+  initRelays();
   while (digitalRead(LPT_BSensor))
   {
     relayState[rM] = true;
@@ -549,11 +554,11 @@ void idle_rackBack()
   //  long last_micros = micros();
   //
   relayState[rC] = true;
-//  relayState[rM] = false;
+  //  relayState[rM] = false;
   relayState[rB] = true;
 
   driveRelay(); // Stop Everything
-  delay(200);
+  delay(250);
   if (!digitalRead(LPT_BSensor))
   {
     relayState[rC] = true;
@@ -562,22 +567,20 @@ void idle_rackBack()
     relayState[rB] = false;
     driveRelay();
     relayState[rC] = true;
-//    relayState[rM] = false;
+    //    relayState[rM] = false;
     relayState[rB] = true;
     while (!digitalRead(LPT_BSensor) & !opcancelled);
     driveRelay();
-    delay(200);
+    delay(250);
   }
   idle_initRelays();
-
-  //  Serial.println("Stop Everything");
+  
 }
 
 void rackTest()
 {
   if (!digitalRead(LPT_BSensor))
     rackBack(); // Assume Rack is in Reset Position
-
   initRelays();
   int count = rackTestSteps;
   relayState[rM] = true;
@@ -622,8 +625,7 @@ bool getCard(int count)
     }
     while (!digitalRead(LPT_DSensor) & !opcancelled);
     count--;
-   // Serial.println("WAITING"); 
-
+    //Serial.println("WAITING"); 
   }
   Serial.println("STN");
 
@@ -637,37 +639,31 @@ bool getCard(int count)
 
 void pnchCardSet(String op)
 {
-    lcd.setCursor(0, 1); lcd.write("Punch Initiated.");
+  lcd.setCursor(0, 1); lcd.write("Punch Initiated.");
 
   // if (cardReady == true)
   //  {
   cardReady = false;
   int i = 0;
   //rackBack();  // Reset rack
-  for(i=0;i<10;i++)
+  if (!getCard(entryDistance)) // Start Card Insert
   {
-    delay(300);
-   // Serial.println("WAITING"); 
+    Serial.println(errDescription[5]);
+    rackBack();
+    return ;
   }
-    Serial.println("STN"); 
-//  if (!getCard(entryDistance)) // Start Card Insert
-//  {
-//    Serial.println(errDescription[5]);
-//    rackBack();
-//    return ;
-//  }
   //  Serial.print("INFO: CARD FOUND"); Serial.println("INFO: START PUNCH");
   cmdStr.remove(0);
+
   for (i = 1; i <= card_Max; i++)
   {
   lcd.setCursor(0, 1); lcd.write("Punching Now ");lcd.print(i);if(i<10)lcd.print(" ");
-
-  
+   
     while (Serial.available() > 0  & !opcancelled)
     {
       Serial.println(errCode[3]);
       keepAllUnderReset(true);
-      //rackBack();
+      rackBack();
       return;
     }
 
@@ -680,21 +676,29 @@ void pnchCardSet(String op)
       keepAllUnderReset(true);
       return;
     }
-
     setPunchValue(card_Set[i]);
-   // while (digitalRead(LPT_DSensor) & !opcancelled);
-   delay(100);
+    while (digitalRead(LPT_DSensor) & !opcancelled);
+    if(i==Nprint_Count)
+    {
+        relayState[rP] = true;
+    }
     drivePunchs(1);
     //    while (!digitalRead(LPT_DSensor) & !opcancelled);
     delayMicroseconds(punchReleaseDelay);
     Serial.print(retText[2]); Serial.println(String(i));
     drivePunchs(0);
+    if(i!=Nprint_Count)
+    {
+        relayState[rP] = false;
+    }
   }
   lcd.setCursor(0, 1); lcd.write("Punch Complete.!");
   // while (!digitalRead(LPT_FSensor) & !opcancelled);
 //  idle_rackBack();
-//  rackBack();
-//  }
+  rackBack();
+  // }
+
+
 }
 
 
@@ -825,7 +829,7 @@ bool testDevice(String operand)
     case 'K' :  Serial.println(menuSelection[2]);  lcd.write(menuSelection[2]); relayState[0] = 0; relayState[2] = 1; relayState[1] = !relayState[1]; relayState[3] = 0; relayState[4] = 0; break;
     case 'C' :  Serial.println(menuSelection[5]);   lcd.write(menuSelection[5]); relayState[2] = !relayState[2]; relayState[0] = 0; relayState[1] = 0; relayState[3] = 0; relayState[4] = 0; break;
     case 'B' :  Serial.println(menuSelection[4]);  lcd.write(menuSelection[4]); relayState[2] = 1; relayState[3] = !relayState[3]; relayState[0] = 0; relayState[1] = 0;  relayState[4] = 0; break;
-    case 'P' :  Serial.println(menuSelection[10]); lcd.write(menuSelection[10]); relayState[4] = !relayState[4]; break;
+    case 'P' :  Serial.println(menuSelection[10]); lcd.write(menuSelection[10]); relayState[0] = 0; relayState[2] = 0; relayState[1] = 0; relayState[3] = 0; relayState[4] = !relayState[4]; break;
     case 'R' :  Serial.println(menuSelection[3]);  lcd.write(menuSelection[3]); rackTest(); return true; break;
     case 'Q' :  Serial.println(menuSelection[8]);  lcd.write(menuSelection[8]); rackBack(); break;
     case 'S' :  Serial.println(menuSelection[9]);   lcd.write(menuSelection[9]); realSensors(); break;
@@ -915,7 +919,7 @@ void testMotor()
 
 void driveRelay()
 {
-  //  bool C_B, bool Coil, bool Motor , bool NPrinting , bool CB_Enable
+  //  bool C_B, bool Coil, bool Motor , bool nprintin , bool CB_Enable
   //  driveRelay(0, 0, 0, 0, 0); // By Default Everything is OFF
   //  driveRelay(1, x, 0, 0, 0); // Coil
   //  driveRelay(1, 1, x, 0, 0); // Motor
@@ -930,9 +934,9 @@ void driveRelay()
   }
 
   if (relayState[3] == true)
-    driveLatches(7, 1 , relayState[2], relayState[0], relayState[4], relayState[3], 1, 1, 1);
+    driveLatches(7, 1 , relayState[2], relayState[0], relayState[4], relayState[3], 1,1,1);
   else
-    driveLatches(7, 0 , relayState[2], relayState[0], relayState[4], relayState[1], 1, 1, 1);
+    driveLatches(7, 0 , relayState[2], relayState[0], relayState[4], relayState[1], 1,1,1);
 
   for (i = 0; i < 7; i++)
   {
@@ -992,6 +996,7 @@ void moveHead (bool upDown)
   while (!digitalRead(LPT_DSensor) & !opcancelled);
   initRelays();
 }
+
 
 void driveLatchSet(String dataSeq)
 {
@@ -1127,26 +1132,15 @@ void initRelays()
 
 void idle_initRelays()
 {
-//  relayState[0] = 1; relayState[2] = 1; relayState[1] = 0; relayState[3] = 0; relayState[4] = 0; driveRelay();
+  //  relayState[0] = 1; relayState[2] = 1; relayState[1] = 0; relayState[3] = 0; relayState[4] = 0; driveRelay();
   relayState[rM] = true; // The Motor keeps spining
-  relayState[rK] = true;
-  relayState[rC] = false;
-  relayState[rB] = false;
-  relayState[rP] = false;
-
-  driveRelay();
-}
-
-
-void stop_idle_motor()
-{
-  relayState[rM] = false; // The Motor stops spining
   relayState[rK] = false;
-  relayState[rC] = false;
+  relayState[rC] = true;
   relayState[rB] = false;
   relayState[rP] = false;
   driveRelay();
 }
+
 
 
 void initPins()

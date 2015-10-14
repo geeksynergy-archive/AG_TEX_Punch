@@ -130,8 +130,6 @@ Keypad keypad = Keypad( makeKeymap(keys), rowPins, colPins, ROWS, COLS );
 
 LiquidCrystal lcd(LCD_RS, LCD_EN, LCD_D4, LCD_D5, LCD_D6, LCD_D7);
 
-int reset_idle_Count = 3000;
-int Keep_it_Idle=0;
 void setupLCD()
 {
   pinMode(LCD_RW, OUTPUT);
@@ -162,6 +160,7 @@ void setup()
   lcd.write(errDescription[0]);
   delay(500);
 
+  //  Serial.begin(115200);
   Serial.begin(115200);
   cmdStr.reserve(200);
   initPins();
@@ -172,10 +171,10 @@ void setup()
   //  attachInterrupt(5, ShiftButn, FALLING);
   attachInterrupt(1, OKButn, FALLING);
 
+
+
   resetLcd();
   lcd.write(About[2]);
-
-  Keep_it_Idle = reset_idle_Count;
 
 }
 
@@ -230,10 +229,9 @@ void keepAllUnderReset(bool reset)
     int i;
     for (i = 0; i < 8; i++)
     {
-       if (i == 7)
+      if (i == 7)
         driveLatches(0, 0, 0, 0, 0, 0, 0, 0, 0);
-      else
-        driveLatches(i, 0, 0, 0, 0, 0, 0, 0, 0);
+      driveLatches(i, 0, 0, 0, 0, 0, 0, 0, 0);
     }
   }
 
@@ -241,7 +239,16 @@ void keepAllUnderReset(bool reset)
 
 void loop()
 {
-  
+  if (idle_motor_count > 3000)
+  {
+    idle_motor_count = 0;
+    stop_idle_motor();
+  }
+  else
+  {
+    idle_motor_count++;
+  }
+
   if (opcancelled | cmdStr == "TES Q") // Should Cancel both hardware and software commands
   {
     lcd.setCursor(0, 1);
@@ -285,23 +292,11 @@ void loop()
   }
   else
   {
-      
-    if (Keep_it_Idle  < 500 && Keep_it_Idle  > 100 )
-    {
-      Keep_it_Idle = 100;
-      initRelays();
-      //Serial.println("Device Back On StandBy");
-    }
-    if (Keep_it_Idle  > 400)
-    {
-      Keep_it_Idle--;
-    }
 
     if (Serial.available() > 0)
     {
       cmdStr.remove(0);
       //  firstMicros = micros();
-//      Keep_it_Idle = reset_idle_Count;
     }
     else
     {
@@ -326,8 +321,6 @@ void loop()
 
   if (cmdStr.length() > 3)
   {
-    //Data is Pouring In Keep the device idle
-    Keep_it_Idle = reset_idle_Count; // this sets back to max and waits for the device to cool off
     switch (IsArrayContains(cmdStr.substring(0, 3), opList))
     {
       case 0  : getPunchValue(cmdStr.substring(4));  cmdStr.remove(0); break;
@@ -335,12 +328,17 @@ void loop()
       case 2  : if (!testDevice(cmdStr.substring(4))) cmdStr.remove(0); break;
       case 3  : initCardSet(cmdStr.substring(4)); cmdStr.remove(0); break;
       case 4  : prntCardSet(cmdStr.substring(4)); cmdStr.remove(0); break;
-      case 5  : pnchCardSet(cmdStr.substring(4)); cmdStr.remove(0); Keep_it_Idle = reset_idle_Count;  break;
+      case 5  : pnchCardSet(cmdStr.substring(4)); cmdStr.remove(0); break;
       case 6  : resetFunc(); break;//Reset Device.
       case 7  : get_set_HID(cmdStr.substring(4)); cmdStr.remove(0); break;
       case 8  : realSensors(); cmdStr.remove(0); break;
       case 9  : get_set_PuchDirection(cmdStr.substring(4)); cmdStr.remove(0); break;
       case 10 : get_setEntryDistance(cmdStr.substring(4)); cmdStr.remove(0); break;
+
+
+
+
+
 
       case 11 : moveHead(cmdStr.charAt(4) == '1'); cmdStr.remove(0); break;
       case 12 : rackBack(); cmdStr.remove(0); break;
@@ -525,54 +523,6 @@ void rackBack()
   //  Serial.println("Stop Everything");
 }
 
-
-void idle_rackBack()
-{
-  idle_initRelays();
-  while (digitalRead(LPT_BSensor))
-  {
-    relayState[rM] = true;
-    driveRelay(); // The Rack is now free,,
-    //  Serial.println("Rack is Free");
-  }
-  while (!digitalRead(LPT_BSensor))
-  {
-    //  Serial.println("Ready to Test Rack");
-    relayState[rC] = true;
-    relayState[rM] = true;
-    relayState[rK] = true;
-    relayState[rB] = false;
-    driveRelay(); // Drive Motor to bring Back the Rack
-    //  Serial.println("Drive Motor to bring Back the Rack");
-  }
-
-  //  long last_micros = micros();
-  //
-  relayState[rC] = true;
-//  relayState[rM] = false;
-  relayState[rB] = true;
-
-  driveRelay(); // Stop Everything
-  delay(200);
-  if (!digitalRead(LPT_BSensor))
-  {
-    relayState[rC] = true;
-    relayState[rM] = true;
-    relayState[rK] = true;
-    relayState[rB] = false;
-    driveRelay();
-    relayState[rC] = true;
-//    relayState[rM] = false;
-    relayState[rB] = true;
-    while (!digitalRead(LPT_BSensor) & !opcancelled);
-    driveRelay();
-    delay(200);
-  }
-  idle_initRelays();
-
-  //  Serial.println("Stop Everything");
-}
-
 void rackTest()
 {
   if (!digitalRead(LPT_BSensor))
@@ -622,8 +572,6 @@ bool getCard(int count)
     }
     while (!digitalRead(LPT_DSensor) & !opcancelled);
     count--;
-   // Serial.println("WAITING"); 
-
   }
   Serial.println("STN");
 
@@ -637,38 +585,36 @@ bool getCard(int count)
 
 void pnchCardSet(String op)
 {
-    lcd.setCursor(0, 1); lcd.write("Punch Initiated.");
-
   // if (cardReady == true)
   //  {
   cardReady = false;
   int i = 0;
   //rackBack();  // Reset rack
-  for(i=0;i<10;i++)
+  if (!getCard(entryDistance)) // Start Card Insert
   {
-    delay(300);
-   // Serial.println("WAITING"); 
+    Serial.println(errDescription[5]);
+    rackBack();
+    return ;
   }
-    Serial.println("STN"); 
-//  if (!getCard(entryDistance)) // Start Card Insert
-//  {
-//    Serial.println(errDescription[5]);
-//    rackBack();
-//    return ;
-//  }
   //  Serial.print("INFO: CARD FOUND"); Serial.println("INFO: START PUNCH");
   cmdStr.remove(0);
   for (i = 1; i <= card_Max; i++)
   {
-  lcd.setCursor(0, 1); lcd.write("Punching Now ");lcd.print(i);if(i<10)lcd.print(" ");
-
-  
-    while (Serial.available() > 0  & !opcancelled)
+    if (Serial.available() > 4)
     {
-      Serial.println(errCode[3]);
-      keepAllUnderReset(true);
-      //rackBack();
-      return;
+      int i;
+      while (Serial.available() > 0  & !opcancelled)
+      {
+        char carbyte = Serial.read();
+        cmdStr += carbyte;
+      }
+      if (cmdStr == retText[0])
+      {
+        Serial.println(errCode[3]);
+        keepAllUnderReset(true);
+        rackBack();
+        return;
+      }
     }
 
     if (opcancelled)
@@ -682,19 +628,17 @@ void pnchCardSet(String op)
     }
 
     setPunchValue(card_Set[i]);
-   // while (digitalRead(LPT_DSensor) & !opcancelled);
-   delay(100);
+    while (digitalRead(LPT_DSensor) & !opcancelled);
     drivePunchs(1);
     //    while (!digitalRead(LPT_DSensor) & !opcancelled);
     delayMicroseconds(punchReleaseDelay);
     Serial.print(retText[2]); Serial.println(String(i));
     drivePunchs(0);
   }
-  lcd.setCursor(0, 1); lcd.write("Punch Complete.!");
+
   // while (!digitalRead(LPT_FSensor) & !opcancelled);
-//  idle_rackBack();
-//  rackBack();
-//  }
+  rackBack();
+  //  }
 }
 
 
@@ -1122,29 +1066,6 @@ void initRelays()
   relayState[rB] = false;
   relayState[rP] = false;
 
-  driveRelay();
-}
-
-void idle_initRelays()
-{
-//  relayState[0] = 1; relayState[2] = 1; relayState[1] = 0; relayState[3] = 0; relayState[4] = 0; driveRelay();
-  relayState[rM] = true; // The Motor keeps spining
-  relayState[rK] = true;
-  relayState[rC] = false;
-  relayState[rB] = false;
-  relayState[rP] = false;
-
-  driveRelay();
-}
-
-
-void stop_idle_motor()
-{
-  relayState[rM] = false; // The Motor stops spining
-  relayState[rK] = false;
-  relayState[rC] = false;
-  relayState[rB] = false;
-  relayState[rP] = false;
   driveRelay();
 }
 
