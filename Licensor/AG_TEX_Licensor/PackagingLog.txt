@@ -1,0 +1,23 @@
+ant:
+<ant>
+  <mkdir dir="C:\Users\G-Force\Documents\GitHub\AG_TEX_Punch\Licensor\AG_TEX_Licensor\for_redistribution" />
+  <mkdir dir="C:\Users\G-Force\Documents\GitHub\AG_TEX_Punch\Licensor\AG_TEX_Licensor\for_testing" />
+  <mkdir dir="C:\Users\G-Force\Documents\GitHub\AG_TEX_Punch\Licensor\AG_TEX_Licensor\for_redistribution_files_only" />
+</ant>
+mcc -C -o AG_TEX_Licensor -W WinMain:AG_TEX_Licensor -T link:exe -d C:\Users\G-Force\Documents\GitHub\AG_TEX_Punch\Licensor\AG_TEX_Licensor\for_testing -v C:\Users\G-Force\Documents\GitHub\AG_TEX_Punch\Licensor\AG_Tex_Licensor.m 
+Compiler version: 6.0 (R2015a)
+Dependency analysis by REQUIREMENTS.
+[Warning: Adding path "C:\Users\G-Force\Documents\GitHub\AG_TEX_Punch\Licensor"
+to Compiler path instance.] 
+Parsing file "C:\Users\G-Force\Documents\GitHub\AG_TEX_Punch\Licensor\AG_Tex_Licensor.m"
+	(Referenced from: "Compiler Command Line").
+Deleting 0 temporary MEX authorization files.
+Generating file "C:\Users\G-Force\Documents\GitHub\AG_TEX_Punch\Licensor\AG_TEX_Licensor\for_testing\readme.txt".
+Packaging...
+Adding custom icon C:\Program Files\MATLAB\MATLAB Production Server\R2015a\toolbox\compiler\Resources\default_icon.ico to C:\Users\G-Force\Documents\GitHub\AG_TEX_Punch\Licensor\AG_TEX_Licensor\for_testing\AG_TEX_Licensor.exe.
+Attempting to embed the CTF archive into the application C:\Users\G-Force\Documents\GitHub\AG_TEX_Punch\Licensor\AG_TEX_Licensor\for_testing\AG_TEX_Licensor.exe.
+Finished embedding CTF archive. Deleting the external CTF archive.
+Creating the bundle...
+Web based installer created at C:\Users\G-Force\Documents\GitHub\AG_TEX_Punch\Licensor\AG_TEX_Licensor\for_redistribution\MyAppInstaller_web.exe.
+Packaging complete.
+Elapsed packaging time was: 2 minutes and 10 seconds.

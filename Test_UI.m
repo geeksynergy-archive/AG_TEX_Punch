@@ -22,7 +22,7 @@ function varargout = Test_UI(varargin)
 
 % Edit_menu the above text to modify the response to help Test_UI
 
-% Last Modified by GUIDE v2.5 13-Oct-2015 17:51:48
+% Last Modified by GUIDE v2.5 20-Aug-2015 16:12:33
 
 % Begin initialization code - DO NOT EDIT_MENU
 gui_Singleton = 1;
@@ -223,11 +223,11 @@ card_type.card320 =struct('no_row',8,'no_col',40,'des_str1',4,'des_end1',23,'des
 
 card_type.card408 =struct('no_row',8,'no_col',51,'des_str1',4,'des_end1',29,'des_str2',31,'des_end2',55,'des_str3',0,'des_end3',0,'l_spa',0,'l1_col',1,'l1_row',[2 7],'l2_col',30,'l2_row',[2 7],'l3_col',58,'l3_row',[2 7],'l4_col',0,'l4_row',[0],'peg1',3,'peg2',56,'peg3',0,'emg',1);
 
-card_type.card612 =struct('no_row',12,'no_col',51,'des_str1',4,'des_end1',29,'des_str2',31,'des_end2',55,'des_str3',0,'des_end3',0,'l_spa',0,'l1_col',1,'l1_row',[4 9],'l2_col',30,'l2_row',[3 10],'l3_col',58,'l3_row',[4 9],'l4_col',0,'l4_row',[0],'peg1',3,'peg2',56,'peg3',0,'emg',1);
+card_type.card612 =struct('no_row',12,'no_col',51,'des_str1',4,'des_end1',29,'des_str2',31,'des_end2',55,'des_str3',0,'des_end3',0,'l_spa',0,'l1_col',1,'l1_row',[3 10],'l2_col',30,'l2_row',[3 10],'l3_col',58,'l3_row',[3 10],'l4_col',0,'l4_row',[0],'peg1',3,'peg2',56,'peg3',0,'emg',1);
 
 card_type.card616 =struct('no_row',8,'no_col',77,'des_str1',4,'des_end1',29,'des_str2',32,'des_end2',57,'des_str3',60,'des_end3',84,'l_spa',1,'l1_col',1,'l1_row',[2 7],'l2_col',31,'l2_row',[2 7],'l3_col',59,'l3_row',[2 7],'l4_col',87,'l4_row',[2 7],'peg1',3,'peg2',85,'peg3',0,'emg',1);
 
-card_type.card828 =struct('no_row',12,'no_col',69,'des_str1',4,'des_end1',24,'des_str2',26,'des_end2',52,'des_str3',54,'des_end3',74,'l_spa',0,'l1_col',1,'l1_row',[4 9],'l2_col',25,'l2_row',[3 10],'l3_col',53,'l3_row',[3 10],'l4_col',77,'l4_row',[4 9],'peg1',3,'peg2',75,'peg3',0,'emg',1);
+card_type.card828 =struct('no_row',12,'no_col',69,'des_str1',4,'des_end1',24,'des_str2',26,'des_end2',52,'des_str3',54,'des_end3',74,'l_spa',0,'l1_col',1,'l1_row',[3 10],'l2_col',25,'l2_row',[3 10],'l3_col',53,'l3_row',[3 10],'l4_col',77,'l4_row',[3 10],'peg1',3,'peg2',75,'peg3',0,'emg',1);
 
 handles.card_type=card_type;
 
@@ -1989,8 +1989,8 @@ i=start_no;
 %  Drawnow();
 handles = guidata(hObject);
 int = handles.int;
-% Start of all puchset
 while(i<end_no&&int==0)
+        
     drawnow() ;
     handles = guidata(hObject);
     int = handles.int;
@@ -2033,7 +2033,6 @@ while(i<end_no&&int==0)
     if c==0
         tic;
         entry_Dis=get(handles.edit37,'String');
-        pun_depth=get(handles.edit38,'String');
         try
             flushinput(s);
         catch exception
@@ -2068,15 +2067,6 @@ while(i<end_no&&int==0)
             fprintf(s,e_Dis);
             fscanf(s,'%s')
         end
-        if isempty(pun_depth)==1
-            p_Dis=['PDP',' 5'];
-            fprintf(s,p_Dis);
-            fscanf(s,'%s')
-        else
-            p_Dis=['PDP ',pun_depth];
-            fprintf(s,p_Dis);
-            fscanf(s,'%s')
-        end
     end
     if rem(length(card_disp_test(:,1)),2)==0
         card_send=zeros(length(card_disp_test(:,1))/2,length(card_disp_test(1,:)));
@@ -2105,8 +2095,6 @@ while(i<end_no&&int==0)
         card_append(:,:)=changem(card_append(:,:),[0 1 1 1],[1 2 5 255]);
     end
     %         pause(0.1);
-    drawnow() ;
-
     for j=1:length(card_append)
         send_data(j)=bi2de(card_append(:,j)','left-msb');
         if j==1
@@ -2132,11 +2120,6 @@ while(i<end_no&&int==0)
     end
     %     toc
     
-    if int==0
-        cla(handles.axes3);
-        cla(handles.axes4);
-        cla(handles.axes5);
-    end
     
     %       card_disp([1:2:end],[1:card_select.peg1-1 card_select.peg1+1:card_select.peg2-1 card_select.peg2+1:end])=card_disp_test([1:end],[1:card_select.peg1-1 card_select.peg1+1:card_select.peg2-1 card_select.peg2+1:end]);
     if i>2
@@ -2268,7 +2251,7 @@ while(i<end_no&&int==0)
             'MarkerSize',7);
         %     flushinput(s);
     end
-    drawnow() ;
+    
     pause(0.02);
     str_data=['PUN ','1'];
     fprintf(s,str_data);
@@ -2292,46 +2275,18 @@ while(i<end_no&&int==0)
     drawnow() ;
     handles = guidata(hObject);
     int = handles.int;
-    
-    
-%     Start of one card set
-
-for j=1:length(card_disp_test)
+    for j=1:length(card_disp_test)
         zz=fscanf(s,'%s');
         drawnow() ;
-        if(mod(j,15)==0)
-             cla(handles.axes5);
-             handles = guidata(hObject);
-             int = handles.int;
-             
-                 card_disp_test3=card_gen{i};
-            axes(handles.axes5);
-            [x_peg y_peg]=find(card_disp_test3==5);
-            [x_l y_l]=find(card_disp_test3==2);
-            [x_fil y_fil]=find(card_disp_test3==255);
-            [x_spa y_spa]=find(card_disp_test3==1);
-            plot(y_peg,x_peg,'og',...
-                'MarkerFaceColor','g',...
-                'MarkerSize',13);axis([-1 length(card_disp_test3(1,:))+1 -1 length(card_disp_test3(:,1))+1]);
-            hold on;set(gca,'YTick',[],'XTick',[]);
-            plot(y_fil,x_fil,'ob',...
-                'MarkerFaceColor','b',...
-                'MarkerSize',7);
-            plot(y_l,x_l,'or',...
-                'MarkerFaceColor','r',...
-                'MarkerSize',7);
-            plot(y_spa,x_spa,'ok',...
-                'MarkerFaceColor','none',...
-                'MarkerSize',7);
-
-        end
-
+        handles = guidata(hObject);
+        int = handles.int;
         if int==1
             str_data=['TES X']
             fprintf(s,str_data)
             break;
         end
-
+        handles = guidata(hObject);
+        int = handles.int;
         if strncmp(zz,'PNCHD',5)~=1
             int=1;
             handles.int = int;
@@ -2350,8 +2305,7 @@ for j=1:length(card_disp_test)
         plot(y_peg,x_peg,'og',...
             'MarkerFaceColor','r',...
             'MarkerSize',13);axis([-1 length(card_disp(1,:))+1 -1 length(card_disp(:,1))+1]);
-        hold on;
-        set(gca,'YTick',[],'XTick',[]);
+        hold on;set(gca,'YTick',[],'XTick',[]);
         plot(y_fil,x_fil,'ob',...
             'MarkerFaceColor','g',...
             'MarkerSize',7);
@@ -2361,7 +2315,7 @@ for j=1:length(card_disp_test)
         plot(y_spa,x_spa,'ok',...
             'MarkerFaceColor','none',...
             'MarkerSize',7);
-%         pause(.01);
+        pause(.01);
         if int==1
             break;
         end
@@ -2375,7 +2329,27 @@ for j=1:length(card_disp_test)
         end
         
     end
+    if int==0
+        cla(handles.axes3);
+        cla(handles.axes4);
+        cla(handles.axes5);
+    end
     
+    
+    %%
+    %         if get(handles.pushbutton121,'Value')~=1
+    %                     int=0;
+    %                 else
+    %                     int=1;
+    %                     str_data=['TES X '];
+    %                     fprintf(s,str_data);
+    %                     break
+    %                 end
+    %         if int==1
+    %             break
+    %         end
+    
+    %                 clf;
     c=c+1;
     if c==1
         t=toc;
@@ -2383,7 +2357,6 @@ for j=1:length(card_disp_test)
     time_disp=(end_no-i)*t/60;
     set(handles.text85,'String',double(time_disp));
     i=i+1;
-%      Lets update the registry set now
     
     Local_Directory=[tempdir,'\CardCount.reg'];
     Keyone = '[HKEY_CURRENT_USER\GC_Punch]';
@@ -2421,7 +2394,7 @@ for j=1:length(card_disp_test)
         if(y~=0)
             close all;
         end
-     end
+    end
 
 end
 %     int=1;
@@ -3594,10 +3567,6 @@ com=['COM',temp];
 delete(instrfind({'Port'},{com}));
 s = serial(com);
 set(s,'BaudRate',115200);
-set(s,'DataBits',8);
-set(s,'Terminator','CR/LF');
-set(s,'InputBufferSize',1024);
-% s = serial('COM1', 'BaudRate', 115200, 'DataBits', 8, 'Terminator','CR/LF', 'InputBufferSize', 1024);
 set(s,'Timeout',3);
 set(handles.text199,'String','Not Connected');
 drawnow();
@@ -4376,19 +4345,14 @@ comport=get(handles.edit36,'String');
 temp=comport;
 com=['COM',temp];
 delete(instrfind({'Port'},{com}));
-set(handles.text199,'String','DisConnected');
 serialInfo = instrhwinfo('serial');
 set(hObject,'String','');
 mm=serialInfo.AvailableSerialPorts;
 % contents = cellstr(set(hObject,'String'))
-if(~isempty(mm))
 set(hObject,'String',mm);
 selectedPort = get(hObject,'Value');
 ux=strjoin(mm(selectedPort));
 set(handles.edit36,'String',ux(4:end));
-else
-set(hObject,'String','No Ports Available');
-end 
 catch exception
      disp (exception.message);  disp(exception.stack(1));
     return;
@@ -4401,26 +4365,3 @@ function pushbutton96_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to pushbutton96 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
-
-
-
-function edit38_Callback(hObject, eventdata, handles)
-% hObject    handle to edit38 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of edit38 as text
-%        str2double(get(hObject,'String')) returns contents of edit38 as a double
-
-
-% --- Executes during object creation, after setting all properties.
-function edit38_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to edit38 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
