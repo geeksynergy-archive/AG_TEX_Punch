@@ -1,0 +1,13 @@
+c:\users\g-force\documents\visual studio 2015\Projects\AGTEX_Licensor\AGTEX_Licensor\bin\Debug\AGTEX_Licensor.exe.config
+c:\users\g-force\documents\visual studio 2015\Projects\AGTEX_Licensor\AGTEX_Licensor\bin\Debug\AGTEX_Licensor.exe
+c:\users\g-force\documents\visual studio 2015\Projects\AGTEX_Licensor\AGTEX_Licensor\bin\Debug\AGTEX_Licensor.pdb
+c:\users\g-force\documents\visual studio 2015\Projects\AGTEX_Licensor\AGTEX_Licensor\obj\Debug\AGTEX_Licensor.Properties.Resources.resources
+c:\users\g-force\documents\visual studio 2015\Projects\AGTEX_Licensor\AGTEX_Licensor\obj\Debug\AGTEX_Licensor.csproj.GenerateResource.Cache
+c:\users\g-force\documents\visual studio 2015\Projects\AGTEX_Licensor\AGTEX_Licensor\obj\Debug\AGTEX_Licensor.exe
+c:\users\g-force\documents\visual studio 2015\Projects\AGTEX_Licensor\AGTEX_Licensor\obj\Debug\AGTEX_Licensor.pdb
+C:\Users\G-Force\Documents\Visual Studio 2015\Projects\AGTEX_Licensor\AGTEX_Licensor\obj\Debug\AGTEX_Licensor.AGTEX_LicensorForm.resources
+C:\Users\G-Force\Documents\Visual Studio 2015\Projects\AGTEX_Licensor\AGTEX_Licensor\bin\Debug\AGTEX_Licensor.exe.manifest
+C:\Users\G-Force\Documents\Visual Studio 2015\Projects\AGTEX_Licensor\AGTEX_Licensor\bin\Debug\AGTEX_Licensor.application
+C:\Users\G-Force\Documents\Visual Studio 2015\Projects\AGTEX_Licensor\AGTEX_Licensor\obj\Debug\AGTEX_Licensor.exe.manifest
+C:\Users\G-Force\Documents\Visual Studio 2015\Projects\AGTEX_Licensor\AGTEX_Licensor\obj\Debug\AGTEX_Licensor.application
+C:\Users\G-Force\Documents\Visual Studio 2015\Projects\AGTEX_Licensor\AGTEX_Licensor\obj\Debug\AGTEX_Licensor.csprojResolveAssemblyReference.cache
