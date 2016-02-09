@@ -30,21 +30,21 @@ namespace AGTEX_Licensor
                         // Specify current condition of the license
                         licesnse_statusStrip.Text = "AGTEX Found..! ";
                         license_button.Enabled = true;
-                        //licesnse_statusStrip.Text += "  Licensed : " + GCinstallkey.GetValue("LicenseType").ToString();
-                        //reg_date_time = Convert.ToDateTime(GCinstallkey.GetValue("LicensedDate").ToString());
-                        //exp_date_time = reg_date_time.AddDays(45);
-                        //Card_count = Convert.ToInt32(GCinstallkey.GetValue("Total_Cards").ToString());
+                        licesnse_statusStrip.Text += "  Licensed : " + GCinstallkey.GetValue("LicenseType").ToString();
+                        reg_date_time = Convert.ToDateTime(GCinstallkey.GetValue("LicensedDate").ToString());
+                        exp_date_time = reg_date_time.AddDays(40);
+                        Card_count = Convert.ToInt32(GCinstallkey.GetValue("Total_Cards").ToString());
 
 
-                        //if (GCinstallkey.GetValue("Expired").ToString().Equals("Yes"))
-                        //    licesnse_statusStrip.Text += "  Expired";
-                        //else
-                        //{
-                        //    if (GCinstallkey.GetValue("LicenseType").ToString().Equals("Free"))
-                        //        licesnse_statusStrip.Text += " and Expires on : " + exp_date_time.ToLongDateString();
-                        //    else
-                        //        licesnse_statusStrip.Text += " - Unlimited starting from " + reg_date_time.ToLongDateString();
-                        //}
+                        if (GCinstallkey.GetValue("Expired").ToString().Equals("Yes"))
+                            licesnse_statusStrip.Text += "  Expired";
+                        else
+                        {
+                            if (GCinstallkey.GetValue("LicenseType").ToString().Equals("Free"))
+                                licesnse_statusStrip.Text += " and Expires on : " + exp_date_time.ToLongDateString();
+                            else
+                                licesnse_statusStrip.Text += " - Unlimited starting from " + reg_date_time.ToLongDateString();
+                        }
 
                     }
                     else
